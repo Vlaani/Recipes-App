@@ -1,16 +1,15 @@
-# recipes_app
+# Recipes App
 
-A new Flutter project.
+A Flutter project.
 
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Already done
+  1) Mian screen with recipe cards
+  2) Load data from https://jsonplaceholder.typicode.com/posts
+  3) Navigation bar
+  4) Details screen (50/50)
+## To do
+  1) Profile screen
+  2) Create recipe screen
+  3) Load data from server
+  4) Serch and filters
+  5) ...
