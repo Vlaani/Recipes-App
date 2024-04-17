@@ -3,7 +3,7 @@ import 'package:recipes_app/models/recipe.dart';
 
 class StepCard extends StatelessWidget {
   StepCard(this.data, {Key? key}) : super(key: key);
-  RecipeStep data;
+  final RecipeStep data;
 
   @override
   Widget build(BuildContext context) {

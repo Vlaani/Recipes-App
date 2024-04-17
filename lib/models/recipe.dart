@@ -20,6 +20,7 @@ class RecipeData {
   RecipeData(this.recipeName, this.id, this.previewPath, this.readyTime,
       this.timeInKitchen, this.difficulty, this.spiciness, this.ingredients,
       {this.kitchen});
+
   double getWeight() {
     return ingredients
         .map((e) => e.weight)

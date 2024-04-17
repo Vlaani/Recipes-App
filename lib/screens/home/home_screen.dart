@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'dart:developer';
 
-import 'package:flutter/material.dart';
-import 'package:recipes_app/components/search_bar.dart';
+import 'package:flutter/material.dart' hide SearchBar;
+import 'package:recipes_app/screens/home/components/search_bar.dart';
 import 'package:recipes_app/screens/home/components/recipe_card.dart';
 import 'package:recipes_app/models/recipe.dart';
 import 'package:recipes_app/models/ingredient.dart';
@@ -11,13 +11,13 @@ import 'package:http/http.dart' as http;
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
   static BuildContext? homeBuildContext;
-  //final Function? onTap;
 
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen>
+    with AutomaticKeepAliveClientMixin {
   int page = 0;
   final controller = ScrollController();
   List<RecipeData> recipeCards = [];
@@ -25,14 +25,19 @@ class _HomeScreenState extends State<HomeScreen> {
   bool isLoading = false;
 
   @override
+  bool get wantKeepAlive => true;
+
+  @override
   void initState() {
     super.initState();
-    fetch();
-    controller.addListener(() {
-      if (controller.position.maxScrollExtent == controller.offset) {
-        fetch();
-      }
-    });
+    if (recipeCards.isEmpty) {
+      fetch();
+      controller.addListener(() {
+        if (controller.position.maxScrollExtent == controller.offset) {
+          fetch();
+        }
+      });
+    }
   }
 
   @override
@@ -93,6 +98,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     HomeScreen.homeBuildContext = context;
     return Column(children: [
       Row(children: [

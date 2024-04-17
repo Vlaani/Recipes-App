@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:recipes_app/models/ingredient.dart';
 
-class IngredientCard extends StatelessWidget {
-  IngredientCard(this.data, this.multiplier, {Key? key}) : super(key: key);
-  Ingredient data;
-  double multiplier;
+class IngredientCard extends StatefulWidget {
+  const IngredientCard(this.data, this.multiplier, {Key? key})
+      : super(key: key);
+  final Ingredient data;
+  final double multiplier;
+  @override
+  _IngredientCardState createState() => _IngredientCardState();
+}
 
+class _IngredientCardState extends State<IngredientCard> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -33,12 +38,12 @@ class IngredientCard extends StatelessWidget {
               width: 10,
             ),
             Text(
-              data.ingredientName,
+              widget.data.ingredientName,
               style: const TextStyle(fontSize: 16, color: Color(0xFF666666)),
             ),
           ],
         ),
-        Text((data.weight * multiplier).toString() + " г",
+        Text((widget.data.weight * widget.multiplier).toString() + " г",
             style: const TextStyle(fontSize: 16, color: Color(0xFF666666)))
       ]),
     );

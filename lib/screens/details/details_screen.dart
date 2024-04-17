@@ -18,26 +18,27 @@ class _DetailsScreenState extends State<DetailsScreen> {
   void _updateMultiplierValue({double? addValue, bool isDoneEditting = false}) {
     final text = multiplierController.text;
     if (!_focus.hasFocus || isDoneEditting) {
-      if (text.isEmpty || double.parse(text) == 0) {
-        multiplierController.text = "1.0";
-      }
-      ingredientsMultiplier = double.parse(multiplierController.text);
-      if (addValue != null) {
-        if (ingredientsMultiplier + addValue > 0) {
-          ingredientsMultiplier += addValue;
+      setState(() {
+        if (text.isEmpty || double.parse(text) == 0) {
+          multiplierController.text = "1.0";
         }
-      }
-      if (ingredientsMultiplier >= 100) {
-        ingredientsMultiplier = 99;
-      }
-      multiplierController.text = ingredientsMultiplier.toStringAsFixed(1);
+        ingredientsMultiplier = double.parse(multiplierController.text);
+        if (addValue != null) {
+          if (ingredientsMultiplier + addValue > 0) {
+            ingredientsMultiplier += addValue;
+          }
+        }
+        if (ingredientsMultiplier >= 100) {
+          ingredientsMultiplier = 99;
+        }
+        multiplierController.text = ingredientsMultiplier.toStringAsFixed(1);
+      });
     }
   }
 
   @override
   void initState() {
     super.initState();
-
     multiplierController.addListener(_updateMultiplierValue);
   }
 
@@ -65,7 +66,6 @@ class _DetailsScreenState extends State<DetailsScreen> {
         ]),
         Expanded(
             child: ListView(
-          padding: EdgeInsets.all(0),
           shrinkWrap: true,
           children: [
             Container(
