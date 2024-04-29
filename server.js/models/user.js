@@ -11,7 +11,7 @@ const userSchema = new mongoose.Schema({
         type: String,
         unique: false
     },
-    nickName: {
+    userName: {
         type: String,
         required: [true, "Name required"]
     },
@@ -35,9 +35,15 @@ const userSchema = new mongoose.Schema({
     },
 });
 
-userSchema.pre("save", async function(next) {
+async function cryptPassword(password)
+{
     const salt = await bcrypt.genSalt();
-    this.password = await bcrypt.hash(this.password, salt);
+    password = await bcrypt.hash(password, salt);
+    return password;
+}
+
+userSchema.pre("save", async function(next) {
+    this.password = await cryptPassword(this.password);
     next();
 });
 
@@ -65,6 +71,23 @@ userSchema.statics.load = async function(id)
         return user;
     }
     throw Error("User doesn't exist");
+}
+
+userSchema.statics.update = async function(id, pofilePhotoPath, userName, login, email, password)
+{
+    console.log(id);
+    if (password != undefined)
+    {
+        password = await cryptPassword(password);
+    }
+    let new_data = {
+        ...pofilePhotoPath && {pofilePhotoPath}, 
+        ...userName && {userName}, 
+        ...login && {login}, 
+        ...email && {email}, 
+        ...password && {password}
+    };
+    await this.updateOne({_id: id}, new_data);
 }
 
 const User = mongoose.model("user", userSchema);

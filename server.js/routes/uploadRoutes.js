@@ -5,7 +5,7 @@ const upload = require("../middleware/upload");
 
 const router = Router();
 
-router.post("/uploadRecipe", requireAuth, add_recipe);
-//router.post("/uploadImage", requireAuth, upload.single("file"), upload_image);
+router.post("/uploadRecipe", requireAuth, upload.single("file"), add_recipe);
+router.post("/uploadImage", requireAuth, upload.single("file"), upload_image);
 
 module.exports = router;
