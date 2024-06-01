@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:recipes_app/constants.dart';
 import 'package:recipes_app/models/ingredient.dart';
+import 'package:recipes_app/view_model/data.dart';
 
 class IngredientCard extends StatefulWidget {
   const IngredientCard(this.data, this.multiplier, {Key? key})
@@ -28,23 +30,32 @@ class _IngredientCardState extends State<IngredientCard> {
                 height: 40,
                 width: 40,
                 child: ClipRRect(
-                  borderRadius: BorderRadius.circular(25),
-                  child: Image.asset(
-                    "resources/test_image_2.png",
-                    fit: BoxFit.fill,
-                  ),
-                )),
+                    borderRadius: BorderRadius.circular(25),
+                    child: Image.network(
+                      "http://" + serverUrl + "/images/" + widget.data.iconPath,
+                      fit: BoxFit.fill,
+                    ))),
             SizedBox(
               width: 10,
             ),
             Text(
-              widget.data.ingredientName,
+              widget.data.ingredientName.substring(
+                      0,
+                      widget.data.ingredientName.length > 24
+                          ? 24
+                          : widget.data.ingredientName.length) +
+                  (widget.data.ingredientName.length > 24 ? "..." : ""),
+              overflow: TextOverflow.visible,
               style: const TextStyle(fontSize: 16, color: Color(0xFF666666)),
             ),
           ],
         ),
-        Text((widget.data.weight * widget.multiplier).toString() + " г",
-            style: const TextStyle(fontSize: 16, color: Color(0xFF666666)))
+        Flexible(
+            child: Text(
+                (widget.data.weight * widget.multiplier).toString() + " г",
+                softWrap: false,
+                overflow: TextOverflow.visible,
+                style: const TextStyle(fontSize: 16, color: Color(0xFF666666))))
       ]),
     );
   }

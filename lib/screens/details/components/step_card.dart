@@ -12,7 +12,7 @@ class StepCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(
+            /* SizedBox(
               height: 320,
               width: 320,
               child: ClipRRect(
@@ -21,12 +21,13 @@ class StepCard extends StatelessWidget {
                     "resources/test_image_2.png",
                     fit: BoxFit.fitHeight,
                   )),
-            ),
+            ),*/
+
+            Text(data.description,
+                style: TextStyle(fontSize: 16, color: Color(0xFF666666))),
             SizedBox(
               height: 10,
             ),
-            Text(data.description,
-                style: TextStyle(fontSize: 16, color: Color(0xFF666666)))
           ],
         ));
   }

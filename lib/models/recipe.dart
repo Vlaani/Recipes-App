@@ -1,29 +1,74 @@
 import 'package:flutter/material.dart';
-import 'ingredient.dart';
+import 'package:recipes_app/view_model/data.dart';
 import 'package:recipes_app/models/review.dart';
 
 class RecipeData {
   String recipeName;
-  String id;
-  String previewPath;
+  //String previewPath;
   final Kitchen? kitchen;
-  List<Ingredient> ingredients;
   int readyTime;
   int timeInKitchen;
   int spiciness;
   int difficulty;
+  String description;
+  List<Pair<int, double>> ingredients = [];
 
-  List<Review> reviews = List.empty();
+  List<Review> reviews = [];
+  List<RecipeStep> steps = [];
+  List<String> photoPaths = [];
 
-  late String description;
-  late List<RecipeStep> steps;
-  RecipeData(this.recipeName, this.id, this.previewPath, this.readyTime,
-      this.timeInKitchen, this.difficulty, this.spiciness, this.ingredients,
+  RecipeData(
+      this.recipeName,
+      this.photoPaths,
+      this.description,
+      this.readyTime,
+      this.timeInKitchen,
+      this.difficulty,
+      this.spiciness,
+      this.ingredients,
+      this.steps,
       {this.kitchen});
+  RecipeData.clone(RecipeData obj)
+      : this(
+            obj.recipeName,
+            obj.photoPaths,
+            obj.description,
+            obj.readyTime,
+            obj.timeInKitchen,
+            obj.difficulty,
+            obj.spiciness,
+            obj.ingredients,
+            obj.steps,
+            kitchen: obj.kitchen);
+  RecipeData.fromJson(Map<String, dynamic> json)
+      : recipeName = json['recipeName'] as String,
+        photoPaths = json['photoPaths'] as List<String>,
+        description = json['description'] as String,
+        readyTime = json['readyTime'] as int,
+        timeInKitchen = json['timeInKitchen'] as int,
+        difficulty = json['difficulty'] as int,
+        spiciness = json['spiciness'] as int,
+        ingredients = json['ingredients'] as List<Pair<int, double>>,
+        steps = json['steps'] as List<RecipeStep>,
+        kitchen = json['kitchen'] as Kitchen?;
+  Map<String, dynamic> toJson() {
+    return {
+      "recipeName": recipeName,
+      "photoPaths": photoPaths,
+      "description": description,
+      "readyTime": readyTime,
+      "timeInKitchen": timeInKitchen,
+      "difficulty": difficulty,
+      "spiciness": spiciness,
+      "ingredients": ingredients,
+      "steps": steps,
+      "kitchen": kitchen
+    };
+  }
 
   double getWeight() {
     return ingredients
-        .map((e) => e.weight)
+        .map((e) => e.value)
         .fold(0, (previousValue, element) => previousValue + element);
   }
 
@@ -31,15 +76,6 @@ class RecipeData {
     return reviews
         .map((e) => e.rating)
         .fold(0, (previousValue, element) => previousValue + element);
-  }
-
-  void loadDetails() {
-    description =
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
-    steps = [
-      RecipeStep(
-          Image.asset("resources/test_image.png"), "Do something. bla bla bla")
-    ];
   }
 
   String getName({int? maxChars}) {
@@ -52,12 +88,25 @@ class RecipeData {
 
 class Kitchen {
   String kitchenName;
-  Image kitchenFlag;
+  String kitchenFlag;
   Kitchen(this.kitchenName, this.kitchenFlag);
+  Kitchen.fromJson(Map<String, dynamic> json)
+      : kitchenName = json['kitchenName'] as String,
+        kitchenFlag = json['kitchenFlag'] as String;
+  Map<String, dynamic> toJson() {
+    return {"kitchenName": kitchenName, "kitchenFlag": kitchenFlag};
+  }
 }
 
 class RecipeStep {
-  Image image;
+  //late Image image;
   String description;
-  RecipeStep(this.image, this.description);
+  String iconPath;
+  RecipeStep(this.description, this.iconPath);
+  RecipeStep.fromJson(Map<String, dynamic> json)
+      : description = json['description'] as String,
+        iconPath = json['iconPath'] as String;
+  Map<String, dynamic> toJson() {
+    return {"description": description, "iconPath": iconPath};
+  }
 }

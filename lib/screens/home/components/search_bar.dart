@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 
-class SearchBar extends StatefulWidget {
-  const SearchBar({Key? key}) : super(key: key);
-
+// ignore: must_be_immutable
+class Search extends StatefulWidget {
+  Search(this.onSearch, {Key? key}) : super(key: key);
+  Function onSearch;
   @override
-  _SearchBarState createState() => _SearchBarState();
+  _SearchState createState() => _SearchState();
 }
 
-class _SearchBarState extends State<SearchBar> {
+class _SearchState extends State<Search> {
   String query = '';
 
   void onQueryChanged(String newQuery) {
@@ -16,9 +17,66 @@ class _SearchBarState extends State<SearchBar> {
     });
   }
 
+  Iterable<Widget> getSuggestions(SearchController controller) {
+    final String input = controller.value.text;
+    return [
+      ListTile(
+        title: Text("Coming soon"),
+        trailing: IconButton(
+          icon: const Icon(Icons.call_missed),
+          onPressed: () {
+            controller.text = "Not implemented yet";
+            controller.selection =
+                TextSelection.collapsed(offset: controller.text.length);
+          },
+        ),
+        onTap: () {
+          controller.closeView("Not implemented yet");
+          //handleSelection(filteredColor);
+        },
+      )
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Container(
+    SearchController? _controller;
+    final FocusNode _focusNode = FocusNode();
+    return SearchAnchor(
+        viewHintText: "Поиск",
+        viewOnSubmitted: (value) {
+          query = value;
+          widget.onSearch(query);
+          _controller?.closeView(query);
+          _focusNode.unfocus();
+        },
+        builder: (BuildContext context, SearchController controller) {
+          _controller = controller;
+          return SearchBar(
+            focusNode: _focusNode,
+            hintText: "Поиск",
+            backgroundColor: MaterialStateProperty.resolveWith((states) {
+              return const Color(0xFFEDEDED);
+            }),
+            controller: controller,
+            padding: const MaterialStatePropertyAll<EdgeInsets>(
+                EdgeInsets.symmetric(horizontal: 16.0)),
+            onTap: () {
+              controller.openView();
+            },
+            leading: const Icon(Icons.search),
+          );
+        },
+        isFullScreen: false,
+        suggestionsBuilder:
+            (BuildContext context, SearchController controller) {
+          return getSuggestions(controller);
+        });
+  }
+}
+
+/*
+Container(
       padding: const EdgeInsets.all(10),
       child: TextField(
         onChanged: onQueryChanged,
@@ -42,5 +100,4 @@ class _SearchBarState extends State<SearchBar> {
         ),
       ),
     );
-  }
-}
+ */

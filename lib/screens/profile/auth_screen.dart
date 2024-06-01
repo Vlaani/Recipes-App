@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:recipes_app/constants.dart';
 import 'package:recipes_app/models/user.dart';
 //import 'package:recipes_app/view_model/data.dart';
 
@@ -15,7 +16,6 @@ class AuthenticationScreen extends StatefulWidget {
 
 class _AuthenticationScreenState extends State<AuthenticationScreen> {
   bool isLoginScreen = true;
-  final String serverUrl = "192.168.0.105:8080";
   bool isRequestSent = false;
 
   String loginOrEmail = "";
@@ -26,82 +26,97 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
   bool loginProblem = false;
   bool signupProblem = false;
 
-  void LoginProblem() {
-    setState(() {
-      loginProblem = true;
-    });
-  }
-
-  void SignupProblem() {
-    setState(() {
-      signupProblem = true;
-    });
-  }
-
   Future submitLogin() async {
-    //if (isRequestSent) return;
-    isRequestSent = true;
-    final Uri url = Uri.http(serverUrl, "/login");
-    final body =
-        jsonEncode({"login_or_email": loginOrEmail, "password": password});
-    print(url);
-    final response = await http.post(url,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: body);
-    print(response.statusCode);
-    String? rawCookie = response.headers['set-cookie'];
-    if (response.statusCode == 200) {
-      setState(() {
-        loginProblem = false;
-      });
-      Map<String, String> headers = {};
-      if (rawCookie != null) {
-        int index = rawCookie.indexOf(';');
-        headers['cookie'] =
-            (index == -1) ? rawCookie : rawCookie.substring(0, index);
+    if (isRequestSent) return;
+    try {
+      isRequestSent = true;
+      var url = Uri.http(serverUrl, "/login");
+      final body =
+          jsonEncode({"login_or_email": loginOrEmail, "password": password});
+      var response = await http.post(url,
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: body);
+      String? rawCookie = response.headers['set-cookie'];
+      if (response.statusCode == 200) {
+        if (loginProblem) {
+          setState(() {
+            loginProblem = false;
+          });
+        }
+        Map<String, String> headers = {};
+        if (rawCookie != null) {
+          int index = rawCookie.indexOf(';');
+          headers['cookie'] =
+              (index == -1) ? rawCookie : rawCookie.substring(0, index);
+        }
+        print(response.body);
+        url = Uri.http(serverUrl, "/profile");
+        response = await http.get(url, headers: headers);
+        print(response.body);
+        final _user = User.fromJson(jsonDecode(response.body));
+        print(_user);
+        print("onAuth");
+        widget.onAuthenticated(_user);
+      } else if (response.statusCode != 500) {
+        setState(() {
+          loginProblem = true;
+        });
       }
-      final Uri url = Uri.http(serverUrl, "/profile");
-      print(url);
-      final response = await http.get(url, headers: headers);
-      print(response.statusCode);
-      widget.onAuthenticated(User.fromJson(jsonDecode(response.body)));
-    } else if (response.statusCode != 500) {
-      LoginProblem();
+    } catch (e) {
+      AlertDialog(
+        title: Text(e.toString()),
+      );
+      isRequestSent = false;
     }
     isRequestSent = false;
   }
 
   Future submitSignup() async {
-    //if (isRequestSent) return;
-    isRequestSent = true;
-    final Uri url = Uri.http(serverUrl, "/signup");
-    final body = jsonEncode({
-      "userName": userName,
-      "login": login,
-      "email": email,
-      "password": password
-    });
-    final response = await http.post(url,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: body);
-    print(response.statusCode);
-    if (response.statusCode == 201) {
-      setState(() {
-        signupProblem = false;
-      });
-      widget.onAuthenticated(User.fromJson({
-        "profilePhotoPath": "",
+    if (isRequestSent) return;
+    try {
+      isRequestSent = true;
+      var url = Uri.http(serverUrl, "/signup");
+      final body = jsonEncode({
         "userName": userName,
         "login": login,
         "email": email,
-        "likedRecipes": null
-      }));
-    } else if (response.statusCode != 500) {
-      SignupProblem();
+        "password": password
+      });
+      print(body);
+      var response = await http.post(url,
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: body);
+      print(response.body);
+      if (response.statusCode == 201) {
+        if (signupProblem) {
+          setState(() {
+            signupProblem = false;
+          });
+        }
+        widget.onAuthenticated(User.fromJson({
+          "profilePhotoPath": "",
+          "userName": userName,
+          "cookie": response.headers["cookie"],
+          "login": login.toLowerCase(),
+          "email": email.toLowerCase(),
+          "publishedRecipes": [],
+          "likedRecipes": [],
+          "userRecipes": []
+        }));
+      } else if (response.statusCode != 500) {
+        setState(() {
+          signupProblem = true;
+        });
+      }
+    } catch (e) {
+      AlertDialog(
+        title: Text(e.toString()),
+      );
+      isRequestSent = false;
     }
     isRequestSent = false;
   }
@@ -117,7 +132,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
     return Column(children: [
       Row(mainAxisAlignment: MainAxisAlignment.end, children: [
         Container(
-          padding: const EdgeInsets.all(32),
+          padding: const EdgeInsets.all(24),
         ),
         Align(
             alignment: Alignment.centerRight,
@@ -130,8 +145,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
       ]),
       Expanded(
         child: Container(
-          padding:
-              const EdgeInsets.only(right: 30, left: 30, bottom: 10, top: 15),
+          padding: const EdgeInsets.only(right: 30, left: 30, bottom: 10),
           child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -140,7 +154,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                     widget.appLogoPath,
                     fit: BoxFit.fill,
                   ),
-                  SizedBox(height: (isLoginScreen ? 60 : 30)),
+                  SizedBox(height: (isLoginScreen ? 60 : 20)),
                   isLoginScreen
                       ? Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -522,7 +536,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                                                     BorderRadius.circular(15)),
                                           ),
                                           backgroundColor:
-                                              MaterialStateProperty.all(
+                                              WidgetStateProperty.all(
                                                   Colors.amber)),
                                       child: Text("Создать аккаунт",
                                           style: const TextStyle(
