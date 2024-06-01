@@ -5,7 +5,7 @@ const { Int32 } = require("mongodb");
 mongoose.connect(dbURI);
 
 const ingredientSchema = new mongoose.Schema({
-    ingredientImagePath:
+    iconPath:
     {
         type: String,
         unique: false

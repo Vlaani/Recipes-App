@@ -5,14 +5,17 @@ const { Int32 } = require("mongodb");
 mongoose.connect(dbURI);
 
 const recipeSchema = new mongoose.Schema({
-    previewPath:
+    photoPaths:
     {
-        type: String,
+        type: Array,
+        of: {
+            type: String,
+        },
         unique: false
     },
     name: {
         type: String,
-        required: [true, "Name required"]
+        //required: [true, "Name required"]
     },
     description: {
         type: String
@@ -24,22 +27,22 @@ const recipeSchema = new mongoose.Schema({
     readinessTime:
     {
         type: Number,
-        required: true
+        //required: true
     },
     timeInKitchen:
     {
         type: Number,
-        required: true
+        //required: true
     },
     difficulty:
     {
         type: Number,
-        required: true
+        //required: true
     },
     spiciness:
     {
         type: Number,
-        required: true
+        //required: true
     },
     ingredients: {
         type: Array,
@@ -47,11 +50,11 @@ const recipeSchema = new mongoose.Schema({
             type: Map,
             of: mongoose.Schema.Types.Mixed
         },
-        required: true
+       // required: true
     },
     steps: {
         type: Array,
-        required: true
+        //required: true
     },
     weight:
     {

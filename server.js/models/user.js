@@ -33,6 +33,12 @@ const userSchema = new mongoose.Schema({
         required: [true, "Password required"],
         minlength: [8, "Minimum password length is 8"]
     },
+    publishedRecipes : {
+        type: Array,
+        of: {
+            type: String,
+        },
+    }
 });
 
 async function cryptPassword(password)
@@ -73,7 +79,7 @@ userSchema.statics.load = async function(id)
     throw Error("User doesn't exist");
 }
 
-userSchema.statics.update = async function(id, pofilePhotoPath, userName, login, email, password)
+userSchema.statics.update = async function(id, pofilePhotoPath, userName, login, email, password, publishedRecipes)
 {
     console.log(id);
     if (password != undefined)
@@ -85,7 +91,8 @@ userSchema.statics.update = async function(id, pofilePhotoPath, userName, login,
         ...userName && {userName}, 
         ...login && {login}, 
         ...email && {email}, 
-        ...password && {password}
+        ...password && {password},
+        ...publishedRecipes && {publishedRecipes}
     };
     await this.updateOne({_id: id}, new_data);
 }

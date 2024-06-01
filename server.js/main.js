@@ -53,7 +53,25 @@ response.status(200).send("ok");
 });
 
 app.put("/updt", async (request, response) => {
-    const new_recipes = await Recipe.find();
+  /*const recipes = await Recipe.find();
+
+  for (let r of recipes)
+    {*/
+      /*await Recipe.findOneAndUpdate({_id: r._id},
+        { $unset: { photosPath: "" } }
+        );*/
+      /*Recipe.updateOne(
+        { _id : r["id"] },
+        [{ $set: { photosPath: { $objectToArray : r["photosPath"] } } }]
+      );*/
+       //await Recipe.updateOne({_id: r["_id"]}, {$rename:{"photosPath": "photoPaths"}})
+    //}
+    /*const new_recipes = await Recipe.find();
+    const ingredients = await Ingredient.find();
+    for (let g of ingredients)
+      {
+        await Ingredient.findOneAndUpdate({name: g.name}, {iconPath: "no_icon.png"} );
+      }*/
     /*let g = await Ingredient.find();
     for (let f of g)
     {
@@ -61,7 +79,7 @@ app.put("/updt", async (request, response) => {
         fats: Number(f.fats),
         carbohydrates: Number(f.carbohydrates)});
     }*/
-    for (let recipe of new_recipes) {
+    /*for (let recipe of new_recipes) {
         let weight = 0, ccals = 0, proteins = 0, fats = 0, carbohydrates = 0;
         let ing = [{}];
         ing.pop();
@@ -82,6 +100,6 @@ app.put("/updt", async (request, response) => {
              proteins: roundHalf(proteins / weight), 
              fats: roundHalf(fats / weight), 
              carbohydrates: roundHalf(carbohydrates / weight)});
-     }
-    response.status(200).json(new_recipes);
+     }*/
+    response.status(200).send("ok");
 })

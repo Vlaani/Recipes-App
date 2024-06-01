@@ -9,6 +9,6 @@ router.post("/signup", signup_post);
 router.post("/login", login_post);
 //router.post("/logout", logout_post);
 router.get("/profile", requireAuth, profile_get);
-router.put("/profile", requireAuth, upload.single("file"), profile_update);
+router.put("/profile", requireAuth, profile_update);
 
 module.exports = router;
