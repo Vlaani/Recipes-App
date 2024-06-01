@@ -1,1 +1,3 @@
-# Recipes-App
+# Recipes App
+
+A Flutter project.
